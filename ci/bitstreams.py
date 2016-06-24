@@ -2,7 +2,7 @@ import os
 import sys
 import subprocess
 
-stream_path = './streams'
+stream_path = './build/streams'
 extensions = ('.bit', '.bin')
 IGNORE = []
 thismodule = sys.modules[__name__]
