@@ -8,7 +8,7 @@ APPNAME='i265'
 top = '.'
 out = 'build'
 flags = [
-  '-std=c++1z',
+  '-std=c++14',
   '-Wall',
   '-Wextra',
   '-Wshadow',
