@@ -1,13 +1,9 @@
 #!/bin/bash
 
-rm -rf build;
-mkdir -p build && \
-cd ./build && \
-cmake -DABORT_ON_SEI_HASH_MISMATCH:bool=true -DCMAKE_BUILD_TYPE=$BUILD_TYPE ../ && \
-make && \
+./waf distclean configure build install --mode=${BUILD_TYPE} --prefix=$PWD/build && \
 {
   if [[ "${BUILD_TYPE}" == "RELEASE" ]]; then
-    export PATH=$PWD/bin:$PATH && \
+    export PATH=$PWD/build/bin:$PATH && \
     mkdir -p ./data && \
     mkdir -p ./streams && \
     wget -q --directory-prefix=./data --accept=zip --input-file=http://wftp3.itu.int/av-arch/jctvc-site/bitstream_exchange/draft_conformance/HEVC_v1 && \
