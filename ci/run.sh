@@ -1,8 +1,8 @@
 #!/bin/bash
 
-./waf distclean configure build install --mode=${BUILD_TYPE} --prefix=$PWD/build && \
+./waf distclean configure build_$BUILD_TYPE install_$BUILD_TYPE --prefix=$PWD/build && \
 {
-  if [[ "${BUILD_TYPE}" == "RELEASE" ]]; then
+  if [[ "${BUILD_TYPE}" == "release" ]]; then
     export PATH=$PWD/build/bin:$PATH && \
     mkdir -p ./build/data && \
     mkdir -p ./build/streams && \

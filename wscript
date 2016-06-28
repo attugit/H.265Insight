@@ -20,24 +20,11 @@ flags = [
   '-pedantic-errors',
 ]
 
-modes = [
-  'DEBUG',
-  'RELEASE',
-]
-
 def init(ctx):
   ctx.load('build_logs')
 
 def options(opt):
   opt.load('compiler_cxx')
-  opt.add_option( '-m', '--mode',
-          action  = 'store',
-          default = os.environ.get('MODE', modes[0]),
-          metavar = 'MODE',
-          dest    = 'mode',
-          choices = modes,
-          help    = 'Default build type, supported: ' + ', '.join(modes)
-          )
 
 def configure(conf):
   conf.setenv('base')
@@ -46,7 +33,7 @@ def configure(conf):
   conf.define('VERSION', VERSION)
   conf.load('compiler_cxx')
   conf.env.CXXFLAGS += flags
-  for variant in modes:
+  for variant in ['debug', 'release']:
     conf.setenv('base')
     newenv = conf.env.derive()
     newenv.detach()
@@ -58,20 +45,8 @@ def configure(conf):
 
   conf.setenv('release')
   conf.env.CXXFLAGS += ['-O3', '-mtune=native', '-fPIC', '-fno-rtti', '-rdynamic']
-  conf.env.DEFINES += ['NDEBUG', 'NO_DEBUG', ]
-  conf.env.DEFINES += ['ABORT_ON_SEI_HASH_MISMATCH']
+  conf.env.DEFINES += ['NDEBUG', 'ABORT_ON_SEI_HASH_MISMATCH']
 
-  conf.env.MODE = conf.options.mode.lower()
-  conf.msg(msg='Default build mode',
-          result=conf.env.MODE)
-
-  conf.setenv(conf.env.MODE)
-  mode = conf.env.derive()
-  mode.detach()
-  conf.setenv('default', mode)
-
-import os
-from waflib.Tools import waf_unit_test
 def build(bld):
   if not bld.variant:
     bld.fatal('try "waf --help"')
@@ -85,7 +60,7 @@ def build(bld):
   )
   bld(
     source       = bld.path.ant_glob(['src/ThirdParty/MD5/md5.c']),
-    target       = 'md5',
+    target       = 'MD5',
     features     = 'cxx cxxstlib',
     install_path = None,
   )
@@ -94,7 +69,7 @@ def build(bld):
     source       = bld.path.ant_glob(['apps/**/*.cpp']),
     target       = APPNAME,
     features     = 'cxx cxxprogram',
-    use          = [PROJECT, 'md5'],
+    use          = [PROJECT, 'MD5'],
   )
 
 from waflib.Build import BuildContext
@@ -110,7 +85,4 @@ for ctx in (BuildContext, CleanContext, InstallContext, UninstallContext):
   class release(ctx):
     cmd = name + '_release'
     variant = 'release'
-  class default(ctx):
-    cmd = name
-    variant = 'default'
 

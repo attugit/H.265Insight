@@ -1,7 +1,7 @@
 #ifndef HEVC_Syntax_check_h
 #define HEVC_Syntax_check_h
 
-#ifndef NO_DEBUG
+#ifndef NDEBUG
 
 #define syntaxCheck(cond)\
 {\
