@@ -32,10 +32,13 @@ def get_streams(path):
 def stream_check(stream):
     cmd = subprocess.Popen('echo', env=dict(os.environ))
     cmd.communicate()
-    test_cmd = 'i265 -i %s && gprof -bQ build/bin/i265 ./gmon.out'%stream
+    test_cmd = 'i265 -i %s'%stream
     cmd = subprocess.Popen(test_cmd.split(), env=dict(os.environ))
     cmd.communicate()
     assert cmd.returncode == 0
+    test_cmd = 'gprof -bQ build/bin/i265 gmon.out'
+    cmd = subprocess.Popen(test_cmd.split(), env=dict(os.environ))
+    cmd.communicate()
 
 def make_test(fname):
     test_name = fname.split('/')[-1].replace('.', '_')
