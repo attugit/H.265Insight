@@ -38,7 +38,8 @@ def build(bld):
     bld.env.CXXFLAGS += ['-g', '-O0']
     bld.env.DEFINES += ['DEBUG']
   if bld.variant == 'release':
-    bld.env.CXXFLAGS += ['-O3', '-mtune=native', '-fPIC', '-fno-rtti', '-rdynamic']
+    bld.env.CXXFLAGS += ['-O3', '-mtune=native', '-fPIC', '-fno-rtti', '-rdynamic', '-pg']
+    bld.env.LINKFLAGS += ['-pg']
     bld.env.DEFINES += ['NDEBUG', 'ABORT_ON_SEI_HASH_MISMATCH']
   bld.env.INCLUDES += ['.', bld.bldnode.abspath()]
   bld.env.INCLUDES += ['src', 'src/ThirdParty/MD5']

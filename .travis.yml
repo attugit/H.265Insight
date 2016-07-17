@@ -3,14 +3,9 @@ services:
   - docker
 
 env:
-  - COMPILER=g++-4.9 BUILD_TYPE=debug
-  - COMPILER=g++-5 BUILD_TYPE=debug
-  - COMPILER=g++-6 BUILD_TYPE=debug
-  - COMPILER=clang++-3.8 BUILD_TYPE=debug
   - COMPILER=g++-4.9 BUILD_TYPE=release
   - COMPILER=g++-5 BUILD_TYPE=release
   - COMPILER=g++-6 BUILD_TYPE=release
-  - COMPILER=clang++-3.8 BUILD_TYPE=release
 
 before_install:
   - docker build -t testing -f ci/testing.docker .
