@@ -74,7 +74,7 @@ IntraAdjSamples deriveAdjSamples(
 
     const auto &reconstructed = picture->pelLayer(PelLayerId::Reconstructed);
 
-    const auto deriveAdjSample =
+    const auto checkAdjSample =
         [&](PelCoord offset)
         {
             const auto inPlaneAdjCoord = inPlaneCoord + offset;
@@ -90,23 +90,47 @@ IntraAdjSamples deriveAdjSamples(
                     !adjAvailableInScanZ
                     || *constrainedIntraPredFlag && isNotIntra(adjCoord))
             {
-                /* adj sample not available for intra prediction */
+                return false;/* adj sample not available for intra prediction */
             }
             else
             {
-                const auto adjSampleValue = reconstructed[int(plane)][inPlaneAdjCoord];
-                adjSamples[offset] = adjSampleValue;
+                return true;
             }
         };
+        const auto deriveAdjSample =
+        [&](PelCoord offset)
+        {
+            const auto inPlaneAdjCoord = inPlaneCoord + offset;
+            adjSamples[offset] = reconstructed[int(plane)][inPlaneAdjCoord];
+        };
 
+    auto const a = PelCoord{-1_pel, -1_pel};
+    auto const b = PelCoord{0_pel, -1_pel};
+    auto const c = PelCoord{-1_pel, 0_pel};
+    auto const d = PelCoord{side - 1_pel, -1_pel};
+    auto const e = PelCoord{-1_pel, side - 1_pel};
+    if(checkAdjSample(a) && checkAdjSample(b) && checkAdjSample(c) && checkAdjSample(d) && checkAdjSample(e))
+    {
+      for(auto x = -1_pel; x < adjSamples.getSideEnd(); ++x)
+      {
+        deriveAdjSample({x, -1_pel});
+      }
+
+      for(auto y = 0_pel; y < adjSamples.getSideEnd(); ++y)
+      {
+        deriveAdjSample({-1_pel, y});
+      }
+    }
+    return adjSamples;
+    /*
     for(auto x = -1_pel; x < adjSamples.getSideEnd(); ++x)
     {
-        deriveAdjSample({x, -1_pel});
+        //deriveAdjSample({x, -1_pel});
     }
 
     for(auto y = 0_pel; y < adjSamples.getSideEnd(); ++y)
     {
-        deriveAdjSample({-1_pel, y});
+        //deriveAdjSample({-1_pel, y});
     }
 
     const auto toStr =
@@ -128,6 +152,7 @@ IntraAdjSamples deriveAdjSamples(
 
     log(logId[int(plane)], toStr);
     return adjSamples;
+    */
 }
 /*----------------------------------------------------------------------------*/
 } /* namespace */
@@ -164,10 +189,10 @@ void IntraSamplesPrediction::exec(
 
     runtime_assert(IntraPredictionMode::Undefined != predModeIntra);
 
-    auto adjSamples =
-        deriveAdjSamples(picture, plane, size, inPlaneSize, coord, inPlaneCoord);
-
+    IntraAdjSamples adjSamples = deriveAdjSamples(picture, plane, size, inPlaneSize, coord, inPlaneCoord);
     if(!adjSamples.areAllAvailable())
+
+    //if(!adjSamples.areAllAvailable())
     {
         /* call: 04/2013, 8.4.4.2.2,
          * "Reference sample substitution process for intra sample prediction" */
