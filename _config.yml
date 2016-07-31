@@ -12,7 +12,7 @@ description: > # this means to ignore newlines until "baseurl:"
   HEVC v2 / ITU-T H.265 v2 (10/2014) decoding process analyzer.
   i265 implements decoding process as defined by ITU-T H.265.
 baseurl: "" # the subpath of your site, e.g. /blog
-url: "http://vlad83.github.io/H.265Insight" # the base hostname & protocol for your site
+url: "http://attugit.github.io/H.265Insight" # the base hostname & protocol for your site
 github_username:  vlad83
 
 # Build settings
