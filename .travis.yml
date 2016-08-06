@@ -25,6 +25,9 @@ before_install:
     printf "Host github.com\n\tStrictHostKeyChecking=no\n\tIdentityFile ~/.ssh/travis.key\n" > ~/.ssh/config
     ls -al ~/.ssh/
     openssl aes-256-cbc -d -in ci/travis.enc -out travis.key -pass env:OPENSSL_PASSWD > /dev/null 2>&1
+    ls -al .
+    sha1sum travis.key
+    echo "cheking sha1sum"
     sha1sum -c ./ci/travis.key.sha1 > /dev/null 2>&1 || echo "error: sha1sum does not match!"; exit 1
     echo "sha1sum is correct"
     mv travis.key ~/.ssh/travis.key
