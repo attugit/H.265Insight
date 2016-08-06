@@ -18,8 +18,9 @@ env:
 before_install:
 - docker build -t testing -f ci/testing.docker .
 script:
-  #- docker run --env=CXX=$COMPILER --env=BUILD_TYPE=$BUILD_TYPE --workdir=/h265 testing
-  #  /bin/bash -c "bash ./ci/run.sh"
+- mkdir -p logs
+- docker run --env=CXX=$COMPILER --env=BUILD_TYPE=$BUILD_TYPE --workdir=/h265 --volume=$PWD/logs:/h265/logs testing
+  /bin/bash -c "bash ./ci/run.sh"
 - |
   (if [[ "${TRAVIS_PULL_REQUEST}" == "false" && "${TRAVIS_REPO_SLUG}" == "${REPO_NAME}"&& "${TRAVIS_BRANCH}" == "master" && "${BUILD_GHPAGES}" == "true" ]]; then
     if [ -z "$OPENSSL_PASSWD" ]; then echo "error: OPENSSL_PASSWD varible is missing!"; exit 1; fi
@@ -33,4 +34,5 @@ script:
     git config --global user.email "h265-bot@travis-ci.com"
     git remote add github git@github.com:${REPO_NAME}.git
     git fetch github
+    cat ./logs/streams.sha1
   fi) || exit 0
