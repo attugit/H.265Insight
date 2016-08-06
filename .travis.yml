@@ -28,7 +28,7 @@ before_install:
     ls -al .
     sha1sum travis.key
     echo "cheking sha1sum"
-    sha1sum -c ./ci/travis.key.sha1 > /dev/null 2>&1 || echo "error: sha1sum does not match!"; exit 1
+    sha1sum -c ./ci/travis.key.sha1 > /dev/null 2>&1 || { echo "error: sha1sum does not match!"; exit 1; }
     echo "sha1sum is correct"
     mv travis.key ~/.ssh/travis.key
     chmod 700 -R ~/.ssh
